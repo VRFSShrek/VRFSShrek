@@ -3,213 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ליגת העל | מרכז שליטה</title>
+<title>VRFSIL | ליגת העל</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
 
 <style>
 :root{
-  --bg:#060a18;
-  --panel:#0f1633;
-  --panel-2:#0b1128;
+  --bg:#0b1020;
+  --panel:#121a33;
+  --panel-2:#0e1530;
   --accent:#22c55e;
   --accent-2:#3b82f6;
   --danger:#ef4444;
-  --gold:#facc15;
   --text:#e5e7eb;
-  --muted:#94a3b8;
+  --muted:#9ca3af;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter,"Segoe UI",Arial,sans-serif;
-  background:radial-gradient(1000px 500px at top,#0f1b4d,#03040a);
-  color:var(--text);
-}
-
-header{
-  position:sticky;top:0;z-index:20;
-  background:rgba(6,10,24,.85);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid #1e2a55;
-}
-.header-inner{
-  max-width:1200px;margin:auto;padding:14px 20px;
-  display:flex;align-items:center;justify-content:space-between
-}
-header h1{margin:0;font-size:20px;font-weight:900;letter-spacing:.4px}
-header h1 span{color:var(--accent)}
-
-.container{max-width:1200px;margin:auto;padding:22px}
-.grid{display:grid;grid-template-columns:2.2fr 1fr;gap:22px}
-
-.card{
-  background:linear-gradient(180deg,var(--panel),var(--panel-2));
-  border:1px solid #1e2a55;
-  border-radius:20px;
-  padding:22px;
-  box-shadow:0 40px 80px rgba(0,0,0,.55);
-}
-.card h2{margin:0 0 16px;font-size:17px;font-weight:800}
-
-.table-wrap{overflow-x:auto}
-.table{width:100%;border-collapse:collapse;min-width:520px}
-.table th,.table td{padding:15px 12px;text-align:center}
-.table th{
-  font-size:12px;letter-spacing:.4px;color:#a5b4fc;
-  border-bottom:1px solid #1e2a55
-}
-.table td{border-bottom:1px solid #141c3f}
-.table tr:hover{background:#0b1435}
-.pos{font-weight:900;color:#c7d2fe}
-.points{font-weight:900;color:var(--accent)}
-.champ{color:var(--gold)}
-
-.live-head{display:flex;align-items:center;gap:8px}
-.live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
-
-.match{
-  display:grid;grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  padding:14px;border-radius:14px;
-  background:#0b1435;border:1px solid #1e2a55;
-  margin-bottom:10px
-}
-.match strong{text-align:center;font-weight:800}
-.score{font-size:20px;font-weight:900;color:#e0f2fe}
-
-.admin-toggle{
-  background:#0b1435;border:1px solid #1e2a55;
-  color:#a5b4fc;padding:8px 14px;
-  border-radius:14px;font-weight:700;cursor:pointer
-}
-
-.admin{display:none;margin-top:24px}
-.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-
-input,select{
-  width:100%;padding:12px 14px;border-radius:14px;
-  background:#070d25;border:1px solid #1e2a55;
-  color:white;font-size:14px
-}
-
-.btn{
-  padding:13px;border-radius:16px;border:none;
-  cursor:pointer;font-weight:900;font-size:14px
-}
-.btn.green{background:linear-gradient(180deg,#22c55e,#16a34a);color:#052e16}
-.btn.blue{background:linear-gradient(180deg,#3b82f6,#2563eb);color:white}
-
-footer{text-align:center;color:#64748b;padding:30px 10px;font-size:13px}
-
-@media(max-width:900px){
-  .grid{grid-template-columns:1fr}
-}
+body{margin:0;font-family:"Segoe UI",Inter,Arial,sans-serif;background:radial-gradient(1200px 600px at top,#101a3f,#050814);color:var(--text);}
+header{position:sticky;top:0;z-index:10;background:rgba(5,8,20,.9);backdrop-filter:blur(12px);border-bottom:1px solid #1f2a52;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px;}
+nav{display:flex;gap:15px;}
+nav button{padding:6px 12px;border-radius:8px;border:none;background:#1f2a52;color:#93c5fd;cursor:pointer;font-weight:700;}
+nav button.active{background:var(--accent);color:#fff;}
+.container{max-width:1200px;margin:auto;padding:20px;}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid #1f2a52;border-radius:18px;padding:20px;margin-bottom:20px;box-shadow:0 30px 60px rgba(0,0,0,.45);}
+.table-wrap{overflow-x:auto;}
+.table{width:100%;border-collapse:collapse;min-width:520px;}
+.table th,.table td{padding:14px;text-align:center;}
+.table th{font-size:13px;color:#93c5fd;font-weight:700;border-bottom:1px solid #1f2a52;}
+.table td{border-bottom:1px solid #1a2347;}
+.table tr:hover{background:#0b1435;}
+.pos{font-weight:800;}
+.points{font-weight:800;color:var(--accent);}
+.live-badge{display:inline-flex;align-items:center;gap:6px;color:#22c55e;font-weight:700;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e;}
+.match{display:flex;align-items:center;justify-content:space-between;padding:12px 10px;border-radius:12px;background:#0b1435;border:1px solid #1f2a52;margin-bottom:10px;}
+.match strong{font-weight:800;}
+.score{font-size:18px;font-weight:900;}
+.history-item{color:var(--muted);font-size:14px;margin-bottom:6px;}
+.admin{display:none;margin-top:20px;}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+input,select{width:100%;padding:10px 12px;border-radius:12px;background:#070d25;border:1px solid #1f2a52;color:white;}
+.btn{padding:12px;border-radius:14px;border:none;cursor:pointer;font-weight:800;}
+.btn.green{background:var(--accent);color:#052e16;}
+.btn.blue{background:var(--accent-2);color:white;}
+.btn.red{background:var(--danger);color:white;}
+footer{color:#6b7280;text-align:center;padding:30px 10px;font-size:13px;}
+@media(max-width:900px){.grid{grid-template-columns:1fr}header h1{font-size:18px}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-inner">
-    <h1>⚽ ליגת העל <span>Control</span></h1>
-    <button class="admin-toggle" onclick="login()">ניהול</button>
-  </div>
+  <h1>-VRFSIL--------------------------</h1>
+  <nav>
+    <button id="tabTable" class="active" onclick="showTab('table')">טבלה</button>
+    <button id="tabLive" onclick="showTab('live')">משחקים חיים</button>
+    <button id="tabBet" onclick="showTab('bet')">הימורים</button>
+    <button id="tabFeed" onclick="showTab('feed')">Feed (X)</button>
+  </nav>
 </header>
 
 <div class="container">
 
-  <div class="grid">
+  <div id="tabContent">
 
-    <div class="card">
+    <!-- טבלה -->
+    <div id="table" class="card">
       <h2>טבלת הליגה</h2>
       <div class="table-wrap">
         <table class="table" id="leagueTable"></table>
       </div>
     </div>
 
-    <div class="card">
-      <h2 class="live-head"><span class="live-dot"></span> משחקים חיים</h2>
+    <!-- משחקים חיים -->
+    <div id="live" class="card" style="display:none">
+      <h2><span class="live-badge"><span class="live-dot"></span> משחקים חיים</span></h2>
       <div id="liveMatches"></div>
+    </div>
+
+    <!-- הימורים -->
+    <div id="bet" class="card" style="display:none">
+      <h2>הימורים</h2>
+      <div id="betArea">בחר משחק קודם להימור</div>
+    </div>
+
+    <!-- Feed (X / טוויטר) -->
+    <div id="feed" class="card" style="display:none">
+      <h2>Feed (X)</h2>
+      <textarea id="tweetInput" placeholder="כתוב הודעה..." style="width:100%;height:80px;background:#070d25;color:white;border-radius:12px;padding:10px;"></textarea>
+      <button class="btn blue" onclick="postTweet()">פרסם</button>
+      <div id="tweetFeed" style="margin-top:15px;"></div>
     </div>
 
   </div>
 
+  <!-- פאנל ניהול -->
   <div class="card admin" id="adminPanel">
     <h2>פאנל ניהול</h2>
     <div class="admin-grid">
       <div>
         <h3>עדכון נקודות</h3>
         <select id="teamSelect"></select>
-        <input type="number" id="points" placeholder="+ / - נקודות">
+        <input type="number" id="points" placeholder="הוסף / הורד נקודות">
         <button class="btn green" onclick="updatePoints()">שמור</button>
       </div>
       <div>
-        <h3>הוספת משחק חי</h3>
+        <h3>משחק חי</h3>
         <input id="home" placeholder="קבוצת בית">
         <input id="away" placeholder="קבוצת חוץ">
         <input id="score" placeholder="0-0">
-        <button class="btn blue" onclick="addLive()">הוסף</button>
+        <button class="btn blue" onclick="addLive()">הוסף משחק</button>
       </div>
     </div>
   </div>
 
 </div>
 
-<footer>© ליגת העל – מערכת ניהול מקצועית</footer>
+<footer>© מערכת VRFSIL – ליגת העל</footer>
 
 <script>
-const ADMIN_KEY="admin123";
+const ADMIN_KEY="admin123"; // סיסמת ניהול
+const leagueTable = document.getElementById("leagueTable");
+const teamSelect = document.getElementById("teamSelect");
+const liveMatches = document.getElementById("liveMatches");
+const tweetFeed = document.getElementById("tweetFeed");
 
-let teams=[
- {name:"מכבי פתח תקווה",pts:0},
- {name:"מכבי נתניה",pts:0},
- {name:"מ.ס אשדוד",pts:0},
- {name:"מכבי באר שבע",pts:0},
- {name:"מכבי תל אביב",pts:0},
- {name:"מכבי חיפה",pts:0},
- {name:"הפועל תל אביב",pts:0},
- {name:"בית"+"ר ברוקולי",pts:0}
-];
-let live=[];
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-function renderTable(){
- teams.sort((a,b)=>b.pts-a.pts);
- let html="<tr><th>#</th><th>קבוצה</th><th>נק'</th></tr>";
- teams.forEach((t,i)=>{
-  let cls=i===0?'champ':'';
-  html+=`<tr><td class='pos ${cls}'>${i+1}</td><td>${t.name}</td><td class='points'>${t.pts}</td></tr>`;
- });
- leagueTable.innerHTML=html;
- teamSelect.innerHTML=teams.map(t=>`<option>${t.name}</option>`).join('');
+// --- Tabs ---
+function showTab(tab){
+  ["table","live","bet","feed"].forEach(t=>document.getElementById(t).style.display="none");
+  document.getElementById(tab).style.display="block";
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("active");
 }
 
-function updatePoints(){
- let t=teams.find(x=>x.name===teamSelect.value);
- if(t){t.pts+=Number(points.value||0);points.value="";renderTable();}
-}
+// --- Load League Table ---
+db.collection("teams").onSnapshot(snapshot=>{
+  const teams=[];
+  snapshot.forEach(doc=>teams.push({name:doc.id,pts:doc.data().points}));
+  teams.sort((a,b)=>b.pts-a.pts);
+  let html="<tr><th>#</th><th>קבוצה</th><th>נק'</th></tr>";
+  teams.forEach((t,i)=>html+=`<tr><td class='pos'>${i+1}</td><td>${t.name}</td><td class='points'>${t.pts}</td></tr>`);
+  leagueTable.innerHTML=html;
+  teamSelect.innerHTML=teams.map(t=>`<option>${t.name}</option>`).join('');
+});
 
-function addLive(){
- live.push({h:home.value,a:away.value,s:score.value});
- home.value=away.value=score.value="";
- renderLive();
-}
-
-function renderLive(){
- liveMatches.innerHTML="";
- live.forEach(m=>{
-  liveMatches.innerHTML+=`
-   <div class='match'>
-    <strong>${m.h}</strong>
-    <span class='score'>${m.s}</span>
-    <strong>${m.a}</strong>
-   </div>`;
- });
-}
-
+// --- Admin ---
 function login(){
- let k=prompt("סיסמת ניהול");
- if(k===ADMIN_KEY){adminPanel.style.display='block'}
+  const k=prompt("סיסמת ניהול");
+  if(k===ADMIN_KEY)document.getElementById("adminPanel").style.display="block";
+}
+function updatePoints(){
+  const teamName=teamSelect.value;
+  const pts=Number(document.getElementById("points").value||0);
+  if(!pts) return;
+  db.collection("teams").doc(teamName).update({points:firebase.firestore.FieldValue.increment(pts)});
+  document.getElementById("points").value="";
 }
 
-renderTable();
+// --- Live Matches ---
+function addLive(){
+  const h=document.getElementById("home").value;
+  const a=document.getElementById("away").value;
+  const s=document.getElementById("score").value;
+  if(!h || !a || !s) return;
+  db.collection("liveMatches").add({home:h,away:a,score:s});
+  document.getElementById("home").value="";
+  document.getElementById("away").value="";
+  document.getElementById("score").value="";
+}
+db.collection("liveMatches").onSnapshot(snapshot=>{
+  liveMatches.innerHTML="";
+  snapshot.forEach(doc=>{
+    const m=doc.data();
+    liveMatches.innerHTML+=`<div class='match'><strong>${m.home}</strong><span class='score'>${m.score}</span><strong>${m.away}</strong></div>`;
+  });
+});
+
+// --- Feed (X) ---
+function postTweet(){
+  const txt=document.getElementById("tweetInput").value.trim();
+  if(!txt) return;
+  db.collection("leaks").add({text:txt});
+  document.getElementById("tweetInput").value="";
+}
+db.collection("leaks").onSnapshot(snapshot=>{
+  tweetFeed.innerHTML="";
+  snapshot.forEach(doc=>{
+    tweetFeed.innerHTML+=`<div class="history-item">`+doc.data().text+`</div>`;
+  });
+});
+
+// --- Login on load (optional) ---
+// login();
 </script>
+
 </body>
 </html>
