@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ליגת העל | טבלה חיה</title>
+
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#121a33;
+  --panel-2:#0e1530;
+  --accent:#22c55e;
+  --accent-2:#3b82f6;
+  --danger:#ef4444;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Segoe UI",Inter,Arial,sans-serif;
+  background:radial-gradient(1200px 600px at top,#101a3f,#050814);
+  color:var(--text);
+}
+
+header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(5,8,20,.8);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid #1f2a52;
+}
+.header-inner{
+  max-width:1200px;margin:auto;padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px
+}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px}
+header span{color:var(--accent)}
+
+.container{max-width:1200px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid #1f2a52;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 30px 60px rgba(0,0,0,.45);
+}
+.card h2{margin:0 0 14px;font-size:18px}
+
+.table-wrap{overflow-x:auto}
+.table{width:100%;border-collapse:collapse;min-width:520px}
+.table th,.table td{padding:14px;text-align:center}
+.table th{font-size:13px;color:#93c5fd;font-weight:700;border-bottom:1px solid #1f2a52}
+.table td{border-bottom:1px solid #1a2347}
+.table tr:hover{background:#0b1435}
+.pos{font-weight:800}
+.points{font-weight:800;color:var(--accent)}
+
+.live-badge{display:inline-flex;align-items:center;gap:6px;color:#22c55e;font-weight:700}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e}
+
+.match{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 10px;border-radius:12px;
+  background:#0b1435;border:1px solid #1f2a52;
+  margin-bottom:10px
+}
+.match strong{font-weight:800}
+.score{font-size:18px;font-weight:900}
+
+.history-item{color:var(--muted);font-size:14px;margin-bottom:6px}
+
+.admin-toggle{
+  background:transparent;border:1px solid #1f2a52;color:#93c5fd;
+  padding:8px 12px;border-radius:12px;cursor:pointer
+}
+
+.admin{display:none;margin-top:20px}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+input,select{
+  width:100%;padding:10px 12px;border-radius:12px;
+  background:#070d25;border:1px solid #1f2a52;color:white
+}
+
+.btn{
+  padding:12px;border-radius:14px;border:none;cursor:pointer;
+  font-weight:800
+}
+.btn.green{background:var(--accent);color:#052e16}
+.btn.blue{background:var(--accent-2);color:white}
+.btn.red{background:var(--danger);color:white}
+
+footer{color:#6b7280;text-align:center;padding:30px 10px;font-size:13px}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  header h1{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>⚽ ליגת העל <span>Live</span></h1>
+    <button class="admin-toggle" onclick="login()">ניהול</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>טבלת הליגה</h2>
+      <div class="table-wrap">
+        <table class="table" id="leagueTable"></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="live-badge"><span class="live-dot"></span> משחקים חיים</span></h2>
+      <div id="liveMatches"></div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>תוצאות אחרונות</h2>
+    <div id="history"></div>
+  </div>
+
+  <div class="card admin" id="adminPanel">
+    <h2>פאנל ניהול</h2>
+    <div class="admin-grid">
+      <div>
+        <h3>עדכון נקודות</h3>
+        <select id="teamSelect"></select>
+        <input type="number" id="points" placeholder="הוסף / הורד נקודות">
+        <button class="btn green" onclick="updatePoints()">שמור</button>
+      </div>
+      <div>
+        <h3>משחק חי</h3>
+        <input id="home" placeholder="קבוצת בית">
+        <input id="away" placeholder="קבוצת חוץ">
+        <input id="score" placeholder="0-0">
+        <button class="btn blue" onclick="addLive()">הוסף משחק</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>© מערכת ליגת העל – עיצוב מקצועי</footer>
+
+<script>
+const ADMIN_KEY="admin123";
+
+let teams=[
+ {name:"מכבי פתח תקווה",pts:0},
+ {name:"מכבי נתניה",pts:0},
+ {name:"מ.ס אשדוד",pts:0},
+ {name:"מכבי באר שבע",pts:0},
+ {name:"מכבי תל אביב",pts:0},
+ {name:"מכבי חיפה",pts:0},
+ {name:"הפועל תל אביב",pts:0},
+ {name:"בית"+"ר ברוקולי",pts:0}
+];
+let live=[];
+
+function renderTable(){
+ teams.sort((a,b)=>b.pts-a.pts);
+ let html="<tr><th>#</th><th>קבוצה</th><th>נק'</th></tr>";
+ teams.forEach((t,i)=>{
+  html+=`<tr><td class='pos'>${i+1}</td><td>${t.name}</td><td class='points'>${t.pts}</td></tr>`;
+ });
+ leagueTable.innerHTML=html;
+ teamSelect.innerHTML=teams.map(t=>`<option>${t.name}</option>`).join('');
+}
+
+function updatePoints(){
+ let t=teams.find(x=>x.name===teamSelect.value);
+ if(t){t.pts+=Number(points.value||0);renderTable();points.value=""}
+}
+
+function addLive(){
+ live.push({h:home.value,a:away.value,s:score.value});
+ home.value=away.value=score.value="";
+ renderLive();
+}
+
+function renderLive(){
+ liveMatches.innerHTML="";
+ live.forEach(m=>{
+  liveMatches.innerHTML+=`<div class='match'><strong>${m.h}</strong><span class='score'>${m.s}</span><strong>${m.a}</strong></div>`;
+ });
+}
+
+function login(){
+ let k=prompt("סיסמת ניהול");
+ if(k===ADMIN_KEY){adminPanel.style.display='block'}
+}
+
+renderTable();
+</script>
+
+</body>
+</html>
