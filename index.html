@@ -11,9 +11,9 @@
     --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
     --card-bg: rgba(30, 41, 59, 0.7);
     --card-border: rgba(255, 255, 255, 0.1);
-    --accent: #10b981; /* ירוק אמרלד */
+    --accent: #10b981;
     --accent-glow: rgba(16, 185, 129, 0.4);
-    --primary: #3b82f6; /* כחול רויאל */
+    --primary: #3b82f6;
     --text: #f1f5f9;
     --text-muted: #94a3b8;
     --danger: #ef4444;
@@ -29,15 +29,14 @@ body {
     padding-bottom: 40px;
 }
 
-/* --- Header & Nav --- */
+/* --- Header --- */
 header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(15, 23, 42, 0.9);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--card-border);
     padding: 15px 20px;
     display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
 header h1 {
@@ -45,20 +44,19 @@ header h1 {
     background: linear-gradient(to left, var(--accent), var(--primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
 }
 
 nav { display: flex; gap: 8px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 12px; }
 nav button {
     padding: 8px 16px; border-radius: 8px; border: none;
     background: transparent; color: var(--text-muted);
-    font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+    font-weight: 500; cursor: pointer; transition: 0.3s;
     font-family: 'Heebo', sans-serif;
 }
 nav button:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-nav button.active { background: var(--card-bg); color: var(--accent); box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-weight: 700; }
+nav button.active { background: var(--card-bg); color: var(--accent); font-weight: 700; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
 
-/* --- Container & Cards --- */
+/* --- Layout --- */
 .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 25px; }
 
 .card {
@@ -77,17 +75,16 @@ h2 { margin-bottom: 20px; font-weight: 800; border-right: 4px solid var(--accent
 /* --- Table --- */
 .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--card-border); }
 .table { width: 100%; border-collapse: collapse; min-width: 600px; }
-.table th { background: rgba(0,0,0,0.3); color: var(--accent); padding: 18px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-.table td { padding: 16px; text-align: center; border-bottom: 1px solid var(--card-border); font-weight: 500; }
-.table tr:last-child td { border-bottom: none; }
+.table th { background: rgba(0,0,0,0.3); color: var(--accent); padding: 18px; font-size: 14px; }
+.table td { padding: 16px; text-align: center; border-bottom: 1px solid var(--card-border); }
 .table tr:hover { background: rgba(255,255,255,0.03); }
 .pos { font-weight: 900; color: var(--text-muted); }
 .points { font-weight: 900; color: var(--accent); font-size: 1.1em; }
 
-/* --- Live Matches --- */
-.live-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px; }
+/* --- Matches --- */
+.live-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); text-transform: uppercase; font-size: 0.9em; }
 .live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s infinite; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 10px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 10px rgba(0,0,0,0); } 100% { opacity: 0; } }
 
 .match {
     display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;
@@ -95,66 +92,57 @@ h2 { margin-bottom: 20px; font-weight: 800; border-right: 4px solid var(--accent
     background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); border-radius: 16px;
     transition: 0.3s;
 }
-.match:hover { border-color: var(--accent); transform: scale(1.01); }
 .match strong { font-size: 1.1em; }
 .score-box { background: #000; padding: 5px 15px; border-radius: 8px; font-family: monospace; font-size: 1.5em; color: var(--accent); letter-spacing: 2px; }
 
-/* --- FEED / X Design (החלק המשודרג) --- */
+/* --- Feed / X --- */
+.feed-locked {
+    text-align: center; padding: 20px; background: rgba(239, 68, 68, 0.1); 
+    border: 1px dashed var(--danger); border-radius: 12px; color: var(--danger); font-weight: bold;
+}
 #tweetInput {
     width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--card-border);
     border-radius: 16px; padding: 15px; color: white; font-family: 'Heebo'; font-size: 16px;
-    transition: 0.3s; margin-bottom: 10px;
+    margin-bottom: 10px; resize: none;
 }
-#tweetInput:focus { border-color: var(--primary); background: rgba(0,0,0,0.3); }
-
-.feed-stream { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; max-height: 500px; overflow-y: auto; padding-left: 5px; }
-/* Scrollbar stylish */
-.feed-stream::-webkit-scrollbar { width: 6px; }
-.feed-stream::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 10px; }
-
 .tweet-card {
-    display: flex; gap: 15px;
-    background: rgba(255,255,255,0.03);
-    padding: 15px; border-radius: 16px;
-    border-right: 3px solid var(--primary);
-    animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex; gap: 15px; background: rgba(255,255,255,0.03);
+    padding: 15px; border-radius: 16px; border-right: 3px solid var(--primary);
+    margin-bottom: 10px;
 }
-@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
 .user-avatar {
     width: 45px; height: 45px; border-radius: 50%;
     background: linear-gradient(135deg, #6366f1, #a855f7);
     display: flex; justify-content: center; align-items: center;
     font-weight: bold; color: white; flex-shrink: 0;
-    font-size: 18px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-
-.tweet-content { flex: 1; }
-.tweet-header { display: flex; justify-content: space-between; margin-bottom: 4px; align-items: baseline; }
-.tweet-user { font-weight: 800; font-size: 15px; color: var(--text); }
+.tweet-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.tweet-user { font-weight: 800; color: var(--text); }
 .tweet-time { font-size: 12px; color: var(--text-muted); }
-.tweet-text { font-size: 15px; line-height: 1.5; color: #e2e8f0; }
 
-/* --- Forms & Admin --- */
-.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+/* --- Admin --- */
+.admin-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.admin-match-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid var(--card-border);
+}
 input, select {
-    width: 100%; padding: 12px 15px; margin-bottom: 10px;
+    width: 100%; padding: 12px; margin-bottom: 10px;
     border-radius: 12px; border: 1px solid var(--card-border);
     background: rgba(0,0,0,0.2); color: white;
 }
 
 /* --- Buttons --- */
 .btn {
-    padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer;
-    font-weight: 700; font-size: 14px; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;
-    display: inline-block;
+    padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer;
+    font-weight: 700; transition: 0.3s;
 }
-.btn.green { background: var(--accent); color: #064e3b; box-shadow: 0 4px 15px var(--accent-glow); }
-.btn.green:hover { background: #34d399; transform: translateY(-2px); }
-.btn.blue { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-.btn.blue:hover { background: #60a5fa; transform: translateY(-2px); }
-.auth-btn-header { margin-right: auto; }
+.btn.green { background: var(--accent); color: #064e3b; }
+.btn.green:hover { background: #34d399; }
+.btn.blue { background: var(--primary); color: white; }
+.btn.blue:hover { background: #60a5fa; }
+.btn.red { background: var(--danger); color: white; }
+.btn.red:hover { background: #f87171; }
 
 /* --- Modal --- */
 #loginModal {
@@ -165,15 +153,9 @@ input, select {
 .modal-content {
     background: #1e293b; padding: 40px; border-radius: 24px; width: 400px;
     border: 1px solid var(--card-border); position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-    animation: scaleUp 0.3s ease;
 }
-@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.closeBtn { position: absolute; top: 15px; left: 15px; background: transparent; color: white; font-size: 20px; border: none; cursor: pointer; }
 
-.closeBtn { position: absolute; top: 15px; left: 15px; background: transparent; color: var(--text-muted); font-size: 20px; border: none; cursor: pointer; }
-.closeBtn:hover { color: white; }
-
-/* Mobile */
 @media(max-width: 768px){
     header { flex-direction: column; gap: 15px; }
     nav { width: 100%; justify-content: center; }
@@ -219,31 +201,44 @@ input, select {
 
     <div id="feed" class="card" style="display:none">
         <h2>הפיד של הליגה (X)</h2>
-        <div style="position:relative;">
-            <textarea id="tweetInput" placeholder="מה דעתך על המשחק? שתף אותנו..." style="height:100px; resize:none;"></textarea>
+        
+        <div id="feedWriteArea" style="display:none; position:relative;">
+            <textarea id="tweetInput" placeholder="מה דעתך על המשחק? שתף אותנו..." style="height:100px;"></textarea>
             <div style="text-align:left; margin-top:-50px; padding:10px; position:absolute; left:0; bottom:0;">
                 <button class="btn blue" onclick="postTweet()" style="padding:8px 20px; font-size:12px;">שלח ציוץ</button>
             </div>
         </div>
-        <div id="tweetFeed" class="feed-stream"></div>
+        
+        <div id="feedGuestMsg" class="feed-locked" style="display:block;">
+            🔒 עליך להתחבר למערכת כדי לכתוב בפיד
+        </div>
+
+        <div id="tweetFeed" style="margin-top:20px;"></div>
     </div>
   </div>
 
   <div class="card admin" id="adminPanel" style="display:none; border-color:var(--accent);">
     <h2 style="border-color:var(--primary);">פאנל ניהול מערכת</h2>
+    
     <div class="admin-grid">
-      <div>
-        <h3 style="margin-bottom:10px; color:var(--text-muted);">עדכון טבלה</h3>
-        <select id="teamSelect"></select>
-        <input type="number" id="points" placeholder="הכנס ניקוד לשינוי">
-        <button class="btn green" style="width:100%" onclick="updatePoints()">עדכן טבלה</button>
-      </div>
-      <div>
-        <h3 style="margin-bottom:10px; color:var(--text-muted);">משחק חדש</h3>
+      <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px;">
+        <h3 style="margin-bottom:10px;">יצירת משחק חדש</h3>
         <input id="home" placeholder="קבוצת בית">
         <input id="away" placeholder="קבוצת חוץ">
         <input id="score" placeholder="0-0">
-        <button class="btn blue" style="width:100%" onclick="addLive()">פרסם משחק</button>
+        <button class="btn blue" style="width:100%" onclick="addLive()">התחל משחק</button>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px;">
+        <h3 style="margin-bottom:10px;">ניהול משחקים חיים (סיום ועדכון)</h3>
+        <div id="adminLiveList"></div>
+      </div>
+      
+       <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px;">
+        <h3 style="margin-bottom:10px;">תיקון נקודות ידני</h3>
+        <select id="teamSelect"></select>
+        <input type="number" id="points" placeholder="הכנס ניקוד">
+        <button class="btn green" style="width:100%" onclick="updatePoints()">עדכן ידנית</button>
       </div>
     </div>
   </div>
@@ -254,8 +249,8 @@ input, select {
   <div class="modal-content">
     <button class="closeBtn" onclick="closeLogin()">✕</button>
     <h2 style="text-align:center; border:none; margin-bottom:30px;">כניסה למערכת</h2>
-    <input type="text" id="modalUsername" placeholder="שם משתמש">
-    <input type="password" id="modalPassword" placeholder="סיסמה">
+    <input type="text" id="modalUsername" placeholder="שם משתמש (Admin: ADMINShrek)">
+    <input type="password" id="modalPassword" placeholder="סיסמה (Pass: ShrekKAPLAN)">
     <div style="display:flex; gap:10px; margin-top:20px;">
         <button class="btn green" style="flex:1" onclick="loginUserModal()">התחבר</button>
         <button class="btn blue" style="flex:1; background:transparent; border:1px solid var(--primary);" onclick="signupUserModal()">הרשמה</button>
@@ -263,22 +258,27 @@ input, select {
   </div>
 </div>
 
-<footer>© 2025 מערכת VRFSIL – כל הזכויות שמורות</footer>
+<footer>© 2025 מערכת VRFSIL</footer>
 
 <script>
-// --- Data Initialization ---
+// --- Data ---
+// הוספתי שדה played (משחקים ששוחקו)
 let teams = JSON.parse(localStorage.getItem("teams")) || [
-  {name:"מכבי פתח תקווה", pts:0},{name:"מכבי נתניה", pts:0},{name:"מ.ס אשדוד", pts:0},
-  {name:"מכבי באר שבע", pts:0},{name:"מכבי תל אביב", pts:0},{name:"מכבי חיפה", pts:0},
-  {name:"הפועל תל אביב", pts:0},{name:"בית'ר ירושלים", pts:0} // תיקנתי מ'ברוקולי' ל'ירושלים' בשביל הרצינות, אפשר לשנות חזרה :)
+  {name:"מכבי פתח תקווה", pts:0, played:0},
+  {name:"מכבי נתניה", pts:0, played:0},
+  {name:"מ.ס אשדוד", pts:0, played:0},
+  {name:"מכבי באר שבע", pts:0, played:0},
+  {name:"מכבי תל אביב", pts:0, played:0},
+  {name:"מכבי חיפה", pts:0, played:0},
+  {name:"הפועל תל אביב", pts:0, played:0},
+  {name:"בית'ר ירושלים", pts:0, played:0}
 ];
 let live = JSON.parse(localStorage.getItem("live")) || [];
 let tweets = JSON.parse(localStorage.getItem("tweets")) || [];
-// ברירת מחדל לאדמין
 let users = JSON.parse(localStorage.getItem("users")) || [{username:"ADMINShrek",password:"ShrekKAPLAN",isAdmin:true}];
 let currentUser = null;
 
-// --- Tab System ---
+// --- Tabs ---
 function showTab(tab){
   ["table","live","bet","feed"].forEach(t => document.getElementById(t).style.display="none");
   document.getElementById(tab).style.display="block";
@@ -286,15 +286,17 @@ function showTab(tab){
   document.getElementById("tab"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("active");
 }
 
-// --- Rendering Logic ---
+// --- Logic ---
 function renderTable(){
     teams.sort((a,b) => b.pts - a.pts);
-    let html="<tr><th>#</th><th>קבוצה</th><th>נקודות</th></tr>";
+    // הוספתי עמודת משחקים (מש')
+    let html="<tr><th>#</th><th>קבוצה</th><th>מש'</th><th>נק'</th></tr>";
     teams.forEach((t,i) => {
-        let rankColor = i < 3 ? "color:#fbbf24;" : ""; // Gold color for top 3
+        let rankColor = i < 3 ? "color:#fbbf24;" : "";
         html+=`<tr>
             <td class='pos' style="${rankColor}">${i+1}</td>
-            <td style="text-align:right; padding-right:30px;">${t.name}</td>
+            <td style="text-align:right;">${t.name}</td>
+            <td>${t.played || 0}</td>
             <td class='points'>${t.pts}</td>
         </tr>`;
     });
@@ -310,76 +312,77 @@ function renderTable(){
 
 function renderLive(){
     let html="";
+    let adminHtml="";
+    
     if(live.length === 0) html = "<div style='text-align:center; padding:20px; color:var(--text-muted)'>אין משחקים פעילים כרגע</div>";
     
-    live.forEach(m => {
+    live.forEach((m, index) => {
+        // תצוגה למשתמש
         html+=`<div class='match'>
             <div style="text-align:left"><strong>${m.home}</strong></div>
             <div class="score-box">${m.score}</div>
             <div style="text-align:right"><strong>${m.away}</strong></div>
         </div>`;
+
+        // תצוגה לאדמין (עם כפתור סיום)
+        adminHtml+=`<div class="admin-match-item">
+            <span>${m.home} vs ${m.away} (${m.score})</span>
+            <button class="btn red" style="padding:5px 10px; font-size:12px;" onclick="endMatch(${index})">סיים משחק</button>
+        </div>`;
     });
+    
     document.getElementById("liveMatches").innerHTML=html;
+    document.getElementById("adminLiveList").innerHTML=adminHtml || "<div style='color:#666; font-size:13px;'>אין משחקים לניהול</div>";
     localStorage.setItem("live",JSON.stringify(live));
 }
 
-// --- Feed Logic (The Upgrade) ---
-function renderTweets(){
-    let html="";
-    if(tweets.length === 0) html = "<div style='text-align:center; padding:20px; opacity:0.6'>היה הראשון לצייץ!</div>";
-
-    tweets.forEach(t => {
-        // יצירת צבע רנדומלי לאוואטר לפי השם
-        let firstLetter = t.user.charAt(0).toUpperCase();
-        let time = t.time || "עכשיו";
-        
-        html+=`
-        <div class="tweet-card">
-            <div class="user-avatar">${firstLetter}</div>
-            <div class="tweet-content">
-                <div class="tweet-header">
-                    <span class="tweet-user">@${t.user}</span>
-                    <span class="tweet-time">${time}</span>
-                </div>
-                <div class="tweet-text">${t.text}</div>
-            </div>
-        </div>`;
-    });
-    document.getElementById("tweetFeed").innerHTML=html;
-    localStorage.setItem("tweets",JSON.stringify(tweets));
-}
-
-function postTweet(){
-    if(!currentUser) return alert("עליך להתחבר כדי לשלוח הודעה!");
-    let txt = document.getElementById("tweetInput").value.trim();
-    if(!txt) return;
-    
-    let now = new Date();
-    let timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-
-    tweets.unshift({
-        text: txt,
-        user: currentUser.username,
-        time: timeString
-    });
-    
-    document.getElementById("tweetInput").value="";
-    renderTweets();
-}
-
-// --- Admin Logic ---
+// --- Admin Functions ---
 function addLive(){
     if(!currentUser?.isAdmin) return alert("אין הרשאה");
     let h=document.getElementById("home").value;
     let a=document.getElementById("away").value;
     let s=document.getElementById("score").value;
     if(!h||!a||!s) return;
+    live.unshift({home:h,away:a,score:s});
+    document.getElementById("home").value=""; document.getElementById("away").value=""; document.getElementById("score").value="";
+    renderLive();
+}
+
+// פונקציה לסיום משחק ועדכון טבלה אוטומטי
+function endMatch(index){
+    if(!confirm("האם לסיים את המשחק ולעדכן את הטבלה?")) return;
     
-    live.unshift({home:h,away:a,score:s}); // Add to top
+    let match = live[index];
+    let parts = match.score.split("-"); // הנחה שהתוצאה היא "1-2"
+    let homeScore = parseInt(parts[0]);
+    let awayScore = parseInt(parts[1]);
     
-    document.getElementById("home").value=""; 
-    document.getElementById("away").value="";
-    document.getElementById("score").value="";
+    // מציאת הקבוצות בטבלה
+    let homeTeam = teams.find(t => t.name === match.home);
+    let awayTeam = teams.find(t => t.name === match.away);
+    
+    if(homeTeam && awayTeam) {
+        // עדכון משחקים ששוחקו
+        homeTeam.played = (homeTeam.played || 0) + 1;
+        awayTeam.played = (awayTeam.played || 0) + 1;
+        
+        // חלוקת נקודות
+        if(homeScore > awayScore) {
+            homeTeam.pts += 3;
+        } else if (awayScore > homeScore) {
+            awayTeam.pts += 3;
+        } else {
+            homeTeam.pts += 1;
+            awayTeam.pts += 1;
+        }
+        renderTable();
+        alert(`המשחק הסתיים! הטבלה עודכנה.`);
+    } else {
+        alert("שגיאה: שמות הקבוצות במשחק לא תואמים לטבלה. המשחק יוסר ללא עדכון נקודות.");
+    }
+    
+    // הסרה מהלייב
+    live.splice(index, 1);
     renderLive();
 }
 
@@ -387,60 +390,76 @@ function updatePoints(){
     if(!currentUser?.isAdmin) return alert("אין הרשאה");
     let selectedName = document.getElementById("teamSelect").value;
     let pts = Number(document.getElementById("points").value)||0;
-    
     let t = teams.find(x => x.name === selectedName);
-    if(t){
-        t.pts += pts;
-        renderTable();
-        document.getElementById("points").value="";
-        alert(`הניקוד של ${selectedName} עודכן בהצלחה`);
+    if(t){ t.pts += pts; renderTable(); document.getElementById("points").value=""; }
+}
+
+// --- Feed ---
+function renderTweets(){
+    let html="";
+    tweets.forEach(t => {
+        let firstLetter = t.user.charAt(0).toUpperCase();
+        html+=`<div class="tweet-card">
+            <div class="user-avatar">${firstLetter}</div>
+            <div style="width:100%">
+                <div class="tweet-header"><span class="tweet-user">@${t.user}</span><span class="tweet-time">${t.time||""}</span></div>
+                <div>${t.text}</div>
+            </div>
+        </div>`;
+    });
+    document.getElementById("tweetFeed").innerHTML=html;
+}
+
+function postTweet(){
+    if(!currentUser) return alert("שגיאה: אינך מחובר.");
+    let txt = document.getElementById("tweetInput").value.trim();
+    if(!txt) return;
+    let now = new Date();
+    tweets.unshift({ text: txt, user: currentUser.username, time: now.getHours()+":"+(now.getMinutes()<10?'0':'')+now.getMinutes() });
+    document.getElementById("tweetInput").value="";
+    renderTweets();
+    localStorage.setItem("tweets",JSON.stringify(tweets));
+}
+
+function updateFeedVisibility(){
+    if(currentUser){
+        document.getElementById("feedWriteArea").style.display="block";
+        document.getElementById("feedGuestMsg").style.display="none";
+    } else {
+        document.getElementById("feedWriteArea").style.display="none";
+        document.getElementById("feedGuestMsg").style.display="block";
     }
 }
 
-// --- Auth System ---
+// --- Auth ---
 function openLogin(){ document.getElementById("loginModal").style.display="flex"; }
 function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
-
 function loginUserModal(){
     let u = document.getElementById("modalUsername").value.trim();
     let p = document.getElementById("modalPassword").value;
     let user = users.find(x => x.username===u && x.password===p);
-    
     if(user){
         currentUser = user;
-        document.getElementById("loginModal").style.display="none";
+        closeLogin();
         document.getElementById("loginBtnHeader").style.display="none";
-        
-        let loggedSpan = document.getElementById("loggedUser");
-        loggedSpan.innerText = "מחובר: " + u;
-        loggedSpan.style.display="inline-flex";
-        
-        if(user.isAdmin){
-            document.getElementById("adminPanel").style.display='block';
-        }
-        // נקה שדות
-        document.getElementById("modalUsername").value="";
-        document.getElementById("modalPassword").value="";
-    } else {
-        alert("שם משתמש או סיסמה לא נכונים");
-    }
+        let ls = document.getElementById("loggedUser");
+        ls.innerText = u; ls.style.display="inline-flex";
+        if(user.isAdmin) document.getElementById("adminPanel").style.display='block';
+        updateFeedVisibility();
+    } else alert("פרטים שגויים");
 }
-
 function signupUserModal(){
     let u = document.getElementById("modalUsername").value.trim();
     let p = document.getElementById("modalPassword").value;
-    if(!u || !p) return alert("חובה למלא שם וסיסמה");
-    if(users.find(x => x.username===u)) return alert("שם משתמש תפוס");
-    
-    users.push({username:u, password:p, isAdmin:false});
+    if(!u||!p) return alert("חסרים פרטים");
+    if(users.find(x=>x.username===u)) return alert("תפוס");
+    users.push({username:u,password:p,isAdmin:false});
     localStorage.setItem("users",JSON.stringify(users));
-    alert("משתמש נוצר בהצלחה! כעת ניתן להתחבר.");
+    alert("נרשמת בהצלחה");
 }
 
 // Init
-renderTable();
-renderLive();
-renderTweets();
+renderTable(); renderLive(); renderTweets(); updateFeedVisibility();
 </script>
 </body>
 </html>
