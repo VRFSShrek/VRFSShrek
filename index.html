@@ -3,41 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VRFSIL | ליגת העל Firebase</title>
+<title>VRFSIL | ליגת העל PRO</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-    --bg-dark: #0f172a;
-    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --card-border: rgba(255, 255, 255, 0.1);
-    --accent: #10b981;
-    --primary: #3b82f6;
-    --text: #f1f5f9;
-    --text-muted: #94a3b8;
-    --danger: #ef4444;
-}
+/* עיצוב */
+:root { --bg-dark: #0f172a; --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); --card-bg: rgba(30, 41, 59, 0.7); --card-border: rgba(255, 255, 255, 0.1); --accent: #10b981; --primary: #3b82f6; --text: #f1f5f9; --text-muted: #94a3b8; --danger: #ef4444; }
 * { box-sizing: border-box; margin:0; padding:0; }
 body { font-family:'Heebo',sans-serif; background: var(--bg-gradient); color: var(--text); min-height:100vh; padding-bottom:40px; }
-
-header {
-    position: sticky; top:0; z-index:100;
-    background: rgba(15,23,42,0.9); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--card-border); padding: 15px 20px;
-    display:flex; justify-content: space-between; align-items:center;
-}
-header h1 {
-    font-size:24px; font-weight:900;
-    background: linear-gradient(to left, var(--accent), var(--primary));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
+header { position: sticky; top:0; z-index:100; background: rgba(15,23,42,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); padding: 15px 20px; display:flex; justify-content: space-between; align-items:center; }
+header h1 { font-size:24px; font-weight:900; background: linear-gradient(to left, var(--accent), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 nav { display:flex; gap:8px; background: rgba(255,255,255,0.05); padding:5px; border-radius:12px; }
-nav button {
-    padding:8px 16px; border-radius:8px; border:none; background:transparent;
-    color: var(--text-muted); font-weight:500; cursor:pointer; transition:0.3s;
-}
+nav button { padding:8px 16px; border-radius:8px; border:none; background:transparent; color: var(--text-muted); font-weight:500; cursor:pointer; transition:0.3s; }
 nav button.active { background: var(--card-bg); color: var(--accent); font-weight:700; }
-
 .container { max-width:1100px; margin:30px auto; padding:0 20px; display:flex; flex-direction:column; gap:25px; }
 .card { background: var(--card-bg); backdrop-filter: blur(16px); border:1px solid var(--card-border); border-radius:24px; padding:30px; box-shadow:0 10px 30px -10px rgba(0,0,0,0.5); }
 h2 { margin-bottom:20px; font-weight:800; border-right:4px solid var(--accent); padding-right:15px; }
@@ -51,10 +28,34 @@ input, select { width:100%; padding:12px; margin-bottom:10px; border-radius:12px
 .btn.green { background: var(--accent); color:#064e3b; }
 .btn.blue { background: var(--primary); color:white; }
 .btn.red { background: var(--danger); color:white; }
+.btn.small { padding: 5px 10px; font-size: 12px; margin-left: 5px; }
 .tweet-card { position: relative; background: rgba(255,255,255,0.03); padding:15px; border-radius:16px; border-right:3px solid var(--primary); margin-bottom:10px; }
 .delete-btn { position: absolute; left: 10px; top: 10px; cursor: pointer; color: var(--danger); font-size: 12px; }
 #loginModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; }
 .modal-content { background:#1e293b; padding:40px; border-radius:24px; width:400px; display:flex; flex-direction:column; gap:15px; position:relative; }
+
+/* עיצוב מיוחד לרשימת ניהול משחקים */
+.admin-live-row {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.live-controls {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+.score-input {
+    width: 60px !important;
+    text-align: center;
+    margin-bottom: 0 !important;
+    padding: 5px !important;
+}
+
 @media(max-width:768px){ header { flex-direction:column; gap:10px; } }
 </style>
 </head>
@@ -99,18 +100,20 @@ input, select { width:100%; padding:12px; margin-bottom:10px; border-radius:12px
         <h2 style="color: var(--accent);">פאנל שליטה אדמין</h2>
         <div class="admin-grid">
             <div class="admin-item">
-                <h3>ניהול ניקוד</h3>
+                <h3>ניהול ניקוד ידני</h3>
                 <select id="teamSelect"></select>
                 <input type="number" id="pointsUpdate" placeholder="כמות נקודות">
                 <button class="btn green" style="width:100%" onclick="updatePoints()">עדכן טבלה</button>
             </div>
             <div class="admin-item">
-                <h3>ניהול משחקים</h3>
-                <div id="adminLiveList" style="margin-bottom:10px; font-size:14px;"></div>
-                <input id="homeT" placeholder="בית">
-                <input id="awayT" placeholder="חוץ">
+                <h3>ניהול משחקים (לייב)</h3>
+                <div id="adminLiveList" style="margin-bottom:15px; font-size:14px;"></div>
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:10px 0;">
+                <h4>הוסף משחק חדש:</h4>
+                <input id="homeT" placeholder="קבוצה ביתית">
+                <input id="awayT" placeholder="קבוצה אורחת">
                 <input id="scoreT" placeholder="0-0">
-                <button class="btn blue" style="width:100%" onclick="addLive()">הוסף משחק</button>
+                <button class="btn blue" style="width:100%" onclick="addLive()">התחל משחק</button>
             </div>
         </div>
     </div>
@@ -122,8 +125,9 @@ input, select { width:100%; padding:12px; margin-bottom:10px; border-radius:12px
         <h2 id="modalTitle">התחברות</h2>
         <input type="text" id="modalUsername" placeholder="שם משתמש">
         <input type="password" id="modalPassword" placeholder="סיסמה">
-        <button class="btn green" id="mainAuthBtn" onclick="login()">התחבר</button>
+        <button class="btn green" id="mainAuthBtn" onclick="handleAuth()">התחבר</button>
         <button class="btn blue" id="switchAuthBtn" onclick="toggleAuthMode()">אין לך חשבון? הירשם עכשיו</button>
+        <p id="errorMsg" style="color:var(--danger); font-size:14px; display:none; text-align:center;"></p>
     </div>
 </div>
 
@@ -143,12 +147,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// משתני מצב
 let state = { teams: [], live: [], tweets: [], users: [] };
 let currentUser = null;
 let isLoginMode = true;
 
-// חיבור בזמן אמת ל-Firestore
 onSnapshot(doc(db, "league", "data"), (docSnap) => {
     if (docSnap.exists()) {
         state = docSnap.data();
@@ -156,7 +158,7 @@ onSnapshot(doc(db, "league", "data"), (docSnap) => {
     } else {
         initDb();
     }
-});
+}, (error) => console.error(error));
 
 async function initDb() {
     const initial = {
@@ -173,100 +175,129 @@ async function initDb() {
     await setDoc(doc(db, "league", "data"), initial);
 }
 
-// פונקציות גלובליות לחשיפה ל-HTML
+// Auth Handlers
+window.handleAuth = () => isLoginMode ? performLogin() : performRegister();
+
+window.performRegister = async () => {
+    const u = document.getElementById("modalUsername").value.trim();
+    const p = document.getElementById("modalPassword").value;
+    if(!u || !p) return alert("חסרים פרטים");
+    if(state.users && state.users.find(x => x.username === u)) return alert("שם תפוס");
+    
+    try {
+        await updateDoc(doc(db, "league", "data"), { users: arrayUnion({username: u, password: p, isAdmin: false}) });
+        alert("נרשמת בהצלחה"); toggleAuthMode();
+    } catch (e) { alert("שגיאה: " + e.message); }
+};
+
+window.performLogin = () => {
+    const u = document.getElementById("modalUsername").value;
+    const p = document.getElementById("modalPassword").value;
+    const user = state.users.find(x => x.username === u && x.password === p);
+    if(user) { currentUser = user; closeLogin(); renderAll(); } 
+    else { document.getElementById("errorMsg").style.display = 'block'; document.getElementById("errorMsg").innerText = "פרטים שגויים"; }
+};
+
+// UI Helpers
 window.showTab = (tab) => {
     ["table", "live", "feed"].forEach(t => document.getElementById(t).style.display = "none");
     document.getElementById(tab).style.display = "block";
     document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
     document.getElementById("tab" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
 };
-
 window.openLogin = () => { document.getElementById("loginModal").style.display = "flex"; };
-window.closeLogin = () => { document.getElementById("loginModal").style.display = "none"; };
-
-window.toggleAuthMode = () => {
-    isLoginMode = !isLoginMode;
-    document.getElementById("modalTitle").innerText = isLoginMode ? "התחברות" : "הרשמה למערכת";
-    document.getElementById("mainAuthBtn").innerText = isLoginMode ? "התחבר" : "צור חשבון";
-    document.getElementById("mainAuthBtn").onclick = isLoginMode ? login : register;
-    document.getElementById("switchAuthBtn").innerText = isLoginMode ? "אין לך חשבון? הירשם עכשיו" : "כבר יש לך חשבון? התחבר";
-};
-
-window.register = async () => {
-    const u = document.getElementById("modalUsername").value.trim();
-    const p = document.getElementById("modalPassword").value;
-    
-    if(!u || !p) return alert("נא למלא את כל השדות");
-    
-    // בדיקה אם המשתמש קיים
-    if(state.users && state.users.find(x => x.username === u)) {
-        return alert("שם משתמש תפוס");
-    }
-    
-    // הוספת המשתמש למערך ועדכון ב-Firebase
-    const newUser = {username: u, password: p, isAdmin: false};
-    const newUsersList = state.users ? [...state.users, newUser] : [newUser];
-
-    try {
-        await updateDoc(doc(db, "league", "data"), { users: newUsersList });
-        alert("נרשמת בהצלחה! עכשיו התחבר");
-        toggleAuthMode();
-    } catch (e) {
-        console.error(e);
-        alert("שגיאה ביצירת המשתמש");
-    }
-};
-
-window.login = () => {
-    const u = document.getElementById("modalUsername").value;
-    const p = document.getElementById("modalPassword").value;
-    const user = state.users.find(x => x.username === u && x.password === p);
-    if(user) {
-        currentUser = user;
-        closeLogin();
-        renderAll();
-    } else { alert("פרטים שגויים"); }
-};
-
+window.closeLogin = () => { document.getElementById("loginModal").style.display = "none"; document.getElementById("errorMsg").style.display='none'; };
+window.toggleAuthMode = () => { isLoginMode = !isLoginMode; document.getElementById("modalTitle").innerText = isLoginMode ? "התחברות" : "הרשמה"; document.getElementById("mainAuthBtn").innerText = isLoginMode ? "התחבר" : "צור חשבון"; document.getElementById("switchAuthBtn").innerText = isLoginMode ? "להרשמה" : "להתחברות"; document.getElementById("errorMsg").style.display = 'none'; };
 window.logout = () => { currentUser = null; renderAll(); };
 
+// Game & Data Logic
 window.updatePoints = async () => {
     const name = document.getElementById("teamSelect").value;
     const val = parseInt(document.getElementById("pointsUpdate").value) || 0;
     const newTeams = state.teams.map(t => t.name === name ? {...t, pts: t.pts + val} : t);
     await updateDoc(doc(db, "league", "data"), { teams: newTeams });
-    document.getElementById("pointsUpdate").value = "";
 };
 
 window.addLive = async () => {
-    const h = document.getElementById("homeT").value, a = document.getElementById("awayT").value, s = document.getElementById("scoreT").value;
+    const h = document.getElementById("homeT").value;
+    const a = document.getElementById("awayT").value;
+    const s = document.getElementById("scoreT").value || "0-0";
     if(h && a) {
-        const newLive = [...state.live, {home: h, away: a, score: s}];
-        await updateDoc(doc(db, "league", "data"), { live: newLive });
+        // הוספתי ID ייחודי לכל משחק כדי שנוכל לעדכן אותו ספציפית
+        const newMatch = {id: Date.now(), home: h, away: a, score: s};
+        await updateDoc(doc(db, "league", "data"), { live: arrayUnion(newMatch) });
+        document.getElementById("homeT").value = "";
+        document.getElementById("awayT").value = "";
     }
 };
 
-window.deleteLive = async (i) => {
-    const newLive = state.live.filter((_, idx) => idx !== i);
+// פונקציה לעדכון תוצאה בזמן אמת
+window.updateLiveScore = async (id) => {
+    const newScore = document.getElementById(`input-score-${id}`).value;
+    const newLive = state.live.map(m => {
+        if(m.id === id) return {...m, score: newScore};
+        return m;
+    });
+    await updateDoc(doc(db, "league", "data"), { live: newLive });
+};
+
+// פונקציה לסיום משחק וחלוקת נקודות
+window.endMatch = async (id) => {
+    if(!confirm("האם אתה בטוח שברצונך לסיים את המשחק ולעדכן את הטבלה?")) return;
+
+    const match = state.live.find(m => m.id === id);
+    if(!match) return;
+
+    // חישוב ניקוד
+    const parts = match.score.split('-'); // מניח פורמט "2-1"
+    const homeScore = parseInt(parts[0]);
+    const awayScore = parseInt(parts[1]);
+    
+    let homePtsToAdd = 0;
+    let awayPtsToAdd = 0;
+
+    if (homeScore > awayScore) { homePtsToAdd = 3; }
+    else if (awayScore > homeScore) { awayPtsToAdd = 3; }
+    else { homePtsToAdd = 1; awayPtsToAdd = 1; }
+
+    // עדכון הטבלה
+    const newTeams = state.teams.map(t => {
+        if(t.name === match.home) return {...t, pts: t.pts + homePtsToAdd};
+        if(t.name === match.away) return {...t, pts: t.pts + awayPtsToAdd};
+        return t;
+    });
+
+    // הסרת המשחק מהלייב
+    const newLive = state.live.filter(m => m.id !== id);
+
+    // שמירה בבת אחת
+    await updateDoc(doc(db, "league", "data"), { 
+        teams: newTeams,
+        live: newLive 
+    });
+};
+
+window.deleteLive = async (id) => {
+    const newLive = state.live.filter(m => m.id !== id);
     await updateDoc(doc(db, "league", "data"), { live: newLive });
 };
 
 window.postTweet = async () => {
     const txt = document.getElementById("tweetInput").value.trim();
     if(!txt) return;
-    const newTweets = [{text: txt, user: currentUser.username}, ...state.tweets];
-    await updateDoc(doc(db, "league", "data"), { tweets: newTweets });
+    await updateDoc(doc(db, "league", "data"), { tweets: arrayUnion({text: txt, user: currentUser.username, id: Date.now()}) });
     document.getElementById("tweetInput").value = "";
 };
 
-window.deleteTweet = async (i) => {
-    const newTweets = state.tweets.filter((_, idx) => idx !== i);
+window.deleteTweet = async (tweetId) => {
+    // מחיקה לפי ID אם קיים, אחרת לפי טקסט (לתמיכה לאחור)
+    const newTweets = state.tweets.filter(t => t.id !== tweetId);
     await updateDoc(doc(db, "league", "data"), { tweets: newTweets });
 };
 
-// רינדור
+
 function renderAll() {
-    // טבלה
+    // Render Table
     const sortedTeams = state.teams ? [...state.teams].sort((a,b) => b.pts - a.pts) : [];
     let tableHtml = `<tr><th>מיקום</th><th>קבוצה</th><th>נקודות</th></tr>`;
     sortedTeams.forEach((t, i) => {
@@ -275,7 +306,7 @@ function renderAll() {
     document.getElementById("leagueTable").innerHTML = tableHtml;
     document.getElementById("teamSelect").innerHTML = sortedTeams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
 
-    // משחקים
+    // Render Live
     let liveHtml = (state.live && state.live.length) ? "" : "<p style='text-align:center; opacity:0.5;'>אין משחקים כרגע</p>";
     if(state.live) {
         state.live.forEach(m => {
@@ -288,12 +319,12 @@ function renderAll() {
     }
     document.getElementById("liveMatches").innerHTML = liveHtml;
 
-    // פיד
+    // Render Feed
     let feedHtml = "";
     if(state.tweets) {
-        state.tweets.forEach((t, i) => {
+        [...state.tweets].reverse().forEach((t) => {
             feedHtml += `<div class="tweet-card">
-                ${currentUser?.isAdmin ? `<span class="delete-btn" onclick="deleteTweet(${i})">מחק 🗑️</span>` : ''}
+                ${currentUser?.isAdmin ? `<span class="delete-btn" onclick="deleteTweet(${t.id})">מחק 🗑️</span>` : ''}
                 <div style="font-weight:bold; color:var(--primary);">${t.user}:</div>
                 <div>${t.text}</div>
             </div>`;
@@ -301,7 +332,7 @@ function renderAll() {
     }
     document.getElementById("tweetFeed").innerHTML = feedHtml;
 
-    // ממשק משתמש
+    // Render User/Admin Interface
     if(currentUser) {
         document.getElementById("loginBtn").style.display = "none";
         document.getElementById("loggedUser").style.display = "inline";
@@ -311,12 +342,19 @@ function renderAll() {
         document.getElementById("feedGuestMsg").style.display = "none";
         document.getElementById("adminPanel").style.display = currentUser.isAdmin ? 'block' : 'none';
         
+        // Admin Live List Control
         let adminLiveHtml = "";
         if(state.live) {
-            state.live.forEach((m, i) => {
-                adminLiveHtml += `<div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:8px; margin-bottom:5px; border-radius:8px; font-size:12px;">
-                    <span>${m.home} - ${m.away}</span>
-                    <button class="btn red" style="padding:2px 5px;" onclick="deleteLive(${i})">X</button>
+            state.live.forEach((m) => {
+                adminLiveHtml += `
+                <div class="admin-live-row">
+                    <div style="font-weight:bold;">${m.home} נגד ${m.away}</div>
+                    <div class="live-controls">
+                        <input id="input-score-${m.id}" value="${m.score}" class="score-input">
+                        <button class="btn blue small" onclick="updateLiveScore(${m.id})">עדכן</button>
+                        <button class="btn green small" onclick="endMatch(${m.id})">סיים (טבלה)</button>
+                        <button class="btn red small" onclick="deleteLive(${m.id})">מחק</button>
+                    </div>
                 </div>`;
             });
         }
