@@ -188,7 +188,33 @@ window.toggleAuthMode = () => {
     isLoginMode = !isLoginMode;
     document.getElementById("modalTitle").innerText = isLoginMode ? "התחברות" : "הרשמה למערכת";
     document.getElementById("mainAuthBtn").innerText = isLoginMode ? "התחבר" : "צור חשבון";
+    document.getElementById("mainAuthBtn").onclick = isLoginMode ? login : register;
     document.getElementById("switchAuthBtn").innerText = isLoginMode ? "אין לך חשבון? הירשם עכשיו" : "כבר יש לך חשבון? התחבר";
+};
+
+window.register = async () => {
+    const u = document.getElementById("modalUsername").value.trim();
+    const p = document.getElementById("modalPassword").value;
+    
+    if(!u || !p) return alert("נא למלא את כל השדות");
+    
+    // בדיקה אם המשתמש קיים
+    if(state.users && state.users.find(x => x.username === u)) {
+        return alert("שם משתמש תפוס");
+    }
+    
+    // הוספת המשתמש למערך ועדכון ב-Firebase
+    const newUser = {username: u, password: p, isAdmin: false};
+    const newUsersList = state.users ? [...state.users, newUser] : [newUser];
+
+    try {
+        await updateDoc(doc(db, "league", "data"), { users: newUsersList });
+        alert("נרשמת בהצלחה! עכשיו התחבר");
+        toggleAuthMode();
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה ביצירת המשתמש");
+    }
 };
 
 window.login = () => {
@@ -241,34 +267,38 @@ window.deleteTweet = async (i) => {
 // רינדור
 function renderAll() {
     // טבלה
-    const sortedTeams = [...state.teams].sort((a,b) => b.pts - a.pts);
+    const sortedTeams = state.teams ? [...state.teams].sort((a,b) => b.pts - a.pts) : [];
     let tableHtml = `<tr><th>מיקום</th><th>קבוצה</th><th>נקודות</th></tr>`;
     sortedTeams.forEach((t, i) => {
         tableHtml += `<tr><td>${i+1}</td><td>${t.name}</td><td style="color:var(--accent); font-weight:bold;">${t.pts}</td></tr>`;
     });
     document.getElementById("leagueTable").innerHTML = tableHtml;
-    document.getElementById("teamSelect").innerHTML = state.teams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    document.getElementById("teamSelect").innerHTML = sortedTeams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
 
     // משחקים
-    let liveHtml = state.live.length ? "" : "<p style='text-align:center; opacity:0.5;'>אין משחקים כרגע</p>";
-    state.live.forEach(m => {
-        liveHtml += `<div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--card-border);">
-            <span style="text-align:left">${m.home}</span>
-            <span style="background:#000; padding:5px 15px; border-radius:5px; color:var(--accent); margin:0 15px; font-family:monospace;">${m.score}</span>
-            <span style="text-align:right">${m.away}</span>
-        </div>`;
-    });
+    let liveHtml = (state.live && state.live.length) ? "" : "<p style='text-align:center; opacity:0.5;'>אין משחקים כרגע</p>";
+    if(state.live) {
+        state.live.forEach(m => {
+            liveHtml += `<div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--card-border);">
+                <span style="text-align:left">${m.home}</span>
+                <span style="background:#000; padding:5px 15px; border-radius:5px; color:var(--accent); margin:0 15px; font-family:monospace;">${m.score}</span>
+                <span style="text-align:right">${m.away}</span>
+            </div>`;
+        });
+    }
     document.getElementById("liveMatches").innerHTML = liveHtml;
 
     // פיד
     let feedHtml = "";
-    state.tweets.forEach((t, i) => {
-        feedHtml += `<div class="tweet-card">
-            ${currentUser?.isAdmin ? `<span class="delete-btn" onclick="deleteTweet(${i})">מחק 🗑️</span>` : ''}
-            <div style="font-weight:bold; color:var(--primary);">${t.user}:</div>
-            <div>${t.text}</div>
-        </div>`;
-    });
+    if(state.tweets) {
+        state.tweets.forEach((t, i) => {
+            feedHtml += `<div class="tweet-card">
+                ${currentUser?.isAdmin ? `<span class="delete-btn" onclick="deleteTweet(${i})">מחק 🗑️</span>` : ''}
+                <div style="font-weight:bold; color:var(--primary);">${t.user}:</div>
+                <div>${t.text}</div>
+            </div>`;
+        });
+    }
     document.getElementById("tweetFeed").innerHTML = feedHtml;
 
     // ממשק משתמש
@@ -282,12 +312,14 @@ function renderAll() {
         document.getElementById("adminPanel").style.display = currentUser.isAdmin ? 'block' : 'none';
         
         let adminLiveHtml = "";
-        state.live.forEach((m, i) => {
-            adminLiveHtml += `<div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:8px; margin-bottom:5px; border-radius:8px; font-size:12px;">
-                <span>${m.home} - ${m.away}</span>
-                <button class="btn red" style="padding:2px 5px;" onclick="deleteLive(${i})">X</button>
-            </div>`;
-        });
+        if(state.live) {
+            state.live.forEach((m, i) => {
+                adminLiveHtml += `<div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:8px; margin-bottom:5px; border-radius:8px; font-size:12px;">
+                    <span>${m.home} - ${m.away}</span>
+                    <button class="btn red" style="padding:2px 5px;" onclick="deleteLive(${i})">X</button>
+                </div>`;
+            });
+        }
         document.getElementById("adminLiveList").innerHTML = adminLiveHtml;
     } else {
         document.getElementById("loginBtn").style.display = "inline";
