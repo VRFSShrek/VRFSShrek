@@ -153,9 +153,12 @@ let teams = JSON.parse(localStorage.getItem('vrfsil_teams')) || [
     {name:"מכבי תל אביב", pts:0}, {name:"מכבי חיפה", pts:0}, 
     {name:"הפועל תל אביב", pts:0}, {name:"בית'ר ברוקולי", pts:0}
 ];
+
+// כאן בוצע השינוי של המנהל ל-ABC ו-123
 let users = JSON.parse(localStorage.getItem('vrfsil_users')) || [
-    {username:"ADMINShrek", password:"ShrekKAPLAN", isAdmin:true}
+    {username:"ABC", password:"123", isAdmin:true}
 ];
+
 let live = [];
 let tweets = [];
 let currentUser = null;
