@@ -79,7 +79,8 @@ input, select { width:100%; padding:12px; margin-bottom:10px; border-radius:12px
     <div id="tabContent">
         <div id="table" class="card">
             <h2>טבלת הליגה</h2>
-            <table class="table" id="leagueTable"></table>
+            <table class="table" id="leagueTable">
+                </table>
         </div>
         <div id="live" class="card" style="display:none">
             <h2>משחקים פעילים</h2>
@@ -100,10 +101,14 @@ input, select { width:100%; padding:12px; margin-bottom:10px; border-radius:12px
         <h2 style="color: var(--accent);">פאנל שליטה אדמין</h2>
         <div class="admin-grid">
             <div class="admin-item">
-                <h3>ניהול ניקוד ידני</h3>
+                <h3>ניהול ידני (ניקוד והפרש)</h3>
                 <select id="teamSelect"></select>
-                <input type="number" id="pointsUpdate" placeholder="כמות נקודות">
-                <button class="btn green" style="width:100%" onclick="updatePoints()">עדכן טבלה</button>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="pointsUpdate" placeholder="הוסף נקודות" style="flex:1">
+                    <input type="number" id="gdUpdate" placeholder="הוסף הפרש שערים" style="flex:1">
+                </div>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">* השתמש במספר שלילי כדי להוריד</p>
+                <button class="btn green" style="width:100%" onclick="updatePoints()">עדכן ידנית</button>
             </div>
             <div class="admin-item">
                 <h3>ניהול משחקים (לייב)</h3>
@@ -163,10 +168,10 @@ onSnapshot(doc(db, "league", "data"), (docSnap) => {
 async function initDb() {
     const initial = {
         teams: [
-            {name:"מכבי פתח תקווה", pts:0}, {name:"הפועל באר שבע", pts:0}, 
-            {name:"מ.ס אשדוד", pts:0}, {name:"מכבי באר שבע", pts:0},
-            {name:"מכבי תל אביב", pts:0}, {name:"מכבי חיפה", pts:0}, 
-            {name:"הפועל תל אביב", pts:0}, {name:"בית'ר ברוקולי", pts:0}
+            {name:"מכבי פתח תקווה", pts:0, gd:0}, {name:"הפועל באר שבע", pts:0, gd:0}, 
+            {name:"מ.ס אשדוד", pts:0, gd:0}, {name:"מכבי באר שבע", pts:0, gd:0},
+            {name:"מכבי תל אביב", pts:0, gd:0}, {name:"מכבי חיפה", pts:0, gd:0}, 
+            {name:"הפועל תל אביב", pts:0, gd:0}, {name:"בית'ר ברוקולי", pts:0, gd:0}
         ],
         live: [],
         tweets: [],
@@ -210,12 +215,26 @@ window.closeLogin = () => { document.getElementById("loginModal").style.display 
 window.toggleAuthMode = () => { isLoginMode = !isLoginMode; document.getElementById("modalTitle").innerText = isLoginMode ? "התחברות" : "הרשמה"; document.getElementById("mainAuthBtn").innerText = isLoginMode ? "התחבר" : "צור חשבון"; document.getElementById("switchAuthBtn").innerText = isLoginMode ? "להרשמה" : "להתחברות"; document.getElementById("errorMsg").style.display = 'none'; };
 window.logout = () => { currentUser = null; renderAll(); };
 
-// Game & Data Logic
+// Manual Update Logic
 window.updatePoints = async () => {
     const name = document.getElementById("teamSelect").value;
-    const val = parseInt(document.getElementById("pointsUpdate").value) || 0;
-    const newTeams = state.teams.map(t => t.name === name ? {...t, pts: t.pts + val} : t);
+    const valPts = parseInt(document.getElementById("pointsUpdate").value) || 0;
+    const valGd = parseInt(document.getElementById("gdUpdate").value) || 0; // קליטת הפרש ידני
+    
+    const newTeams = state.teams.map(t => {
+        if (t.name === name) {
+            // מעדכן את הנקודות ואת ההפרש
+            return {...t, pts: t.pts + valPts, gd: (t.gd || 0) + valGd};
+        }
+        return t;
+    });
+    
     await updateDoc(doc(db, "league", "data"), { teams: newTeams });
+    
+    // Reset inputs
+    document.getElementById("pointsUpdate").value = "";
+    document.getElementById("gdUpdate").value = "";
+    alert("הטבלה עודכנה בהצלחה");
 };
 
 window.addLive = async () => {
@@ -223,15 +242,14 @@ window.addLive = async () => {
     const a = document.getElementById("awayT").value;
     const s = document.getElementById("scoreT").value || "0-0";
     if(h && a) {
-        // הוספתי ID ייחודי לכל משחק כדי שנוכל לעדכן אותו ספציפית
         const newMatch = {id: Date.now(), home: h, away: a, score: s};
         await updateDoc(doc(db, "league", "data"), { live: arrayUnion(newMatch) });
         document.getElementById("homeT").value = "";
         document.getElementById("awayT").value = "";
+        document.getElementById("scoreT").value = "";
     }
 };
 
-// פונקציה לעדכון תוצאה בזמן אמת
 window.updateLiveScore = async (id) => {
     const newScore = document.getElementById(`input-score-${id}`).value;
     const newLive = state.live.map(m => {
@@ -241,17 +259,18 @@ window.updateLiveScore = async (id) => {
     await updateDoc(doc(db, "league", "data"), { live: newLive });
 };
 
-// פונקציה לסיום משחק וחלוקת נקודות
+// End Match & Auto Update
 window.endMatch = async (id) => {
     if(!confirm("האם אתה בטוח שברצונך לסיים את המשחק ולעדכן את הטבלה?")) return;
 
     const match = state.live.find(m => m.id === id);
     if(!match) return;
 
-    // חישוב ניקוד
-    const parts = match.score.split('-'); // מניח פורמט "2-1"
-    const homeScore = parseInt(parts[0]);
-    const awayScore = parseInt(parts[1]);
+    // חישוב ניקוד והפרש שערים אוטומטי
+    const parts = match.score.split('-'); 
+    const homeScore = parseInt(parts[0]) || 0;
+    const awayScore = parseInt(parts[1]) || 0;
+    const scoreDiff = homeScore - awayScore;
     
     let homePtsToAdd = 0;
     let awayPtsToAdd = 0;
@@ -260,17 +279,18 @@ window.endMatch = async (id) => {
     else if (awayScore > homeScore) { awayPtsToAdd = 3; }
     else { homePtsToAdd = 1; awayPtsToAdd = 1; }
 
-    // עדכון הטבלה
     const newTeams = state.teams.map(t => {
-        if(t.name === match.home) return {...t, pts: t.pts + homePtsToAdd};
-        if(t.name === match.away) return {...t, pts: t.pts + awayPtsToAdd};
+        if(t.name === match.home) {
+            return {...t, pts: t.pts + homePtsToAdd, gd: (t.gd || 0) + scoreDiff};
+        }
+        if(t.name === match.away) {
+            return {...t, pts: t.pts + awayPtsToAdd, gd: (t.gd || 0) - scoreDiff};
+        }
         return t;
     });
 
-    // הסרת המשחק מהלייב
     const newLive = state.live.filter(m => m.id !== id);
 
-    // שמירה בבת אחת
     await updateDoc(doc(db, "league", "data"), { 
         teams: newTeams,
         live: newLive 
@@ -290,7 +310,6 @@ window.postTweet = async () => {
 };
 
 window.deleteTweet = async (tweetId) => {
-    // מחיקה לפי ID אם קיים, אחרת לפי טקסט (לתמיכה לאחור)
     const newTweets = state.tweets.filter(t => t.id !== tweetId);
     await updateDoc(doc(db, "league", "data"), { tweets: newTweets });
 };
@@ -298,10 +317,22 @@ window.deleteTweet = async (tweetId) => {
 
 function renderAll() {
     // Render Table
-    const sortedTeams = state.teams ? [...state.teams].sort((a,b) => b.pts - a.pts) : [];
-    let tableHtml = `<tr><th>מיקום</th><th>קבוצה</th><th>נקודות</th></tr>`;
+    const sortedTeams = state.teams ? [...state.teams].sort((a,b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts; // מיון לפי נקודות
+        return (b.gd || 0) - (a.gd || 0); // שובר שוויון לפי הפרש שערים
+    }) : [];
+
+    let tableHtml = `<tr><th>מיקום</th><th>קבוצה</th><th>הפרש</th><th>נקודות</th></tr>`;
     sortedTeams.forEach((t, i) => {
-        tableHtml += `<tr><td>${i+1}</td><td>${t.name}</td><td style="color:var(--accent); font-weight:bold;">${t.pts}</td></tr>`;
+        let gdColor = (t.gd > 0) ? '#10b981' : ((t.gd < 0) ? '#ef4444' : 'var(--text-muted)');
+        let gdSign = (t.gd > 0) ? '+' : '';
+        
+        tableHtml += `<tr>
+            <td>${i+1}</td>
+            <td>${t.name}</td>
+            <td style="color:${gdColor}; direction:ltr;">${gdSign}${t.gd || 0}</td>
+            <td style="color:var(--accent); font-weight:bold; font-size:1.1em;">${t.pts}</td>
+        </tr>`;
     });
     document.getElementById("leagueTable").innerHTML = tableHtml;
     document.getElementById("teamSelect").innerHTML = sortedTeams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
